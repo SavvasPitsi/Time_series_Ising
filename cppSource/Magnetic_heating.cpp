@@ -6,6 +6,7 @@
 #include <time.h>
 #include "matplotlibcpp.h"
 #include <my_func.h> //PI, random(max), mean(values,size), std_dev(values,size)																		//delete one of the two
+#include <well512.hpp>
 
 using namespace std;
 namespace plt = matplotlibcpp;
@@ -39,9 +40,10 @@ void plot_fig(const float* p,int figNum = 1, std::string s="Title")
 
 int main()
 {
-	int i = 0, j = 0, s = 0, k = 0, l = 0, m = 0, u = 0, v = 0, c = 0, count = 0, flag = 0, t_equil = 1, ii = 0, jj = 0;
+	int i = 0, j = 0, s = 0, k = 0, l = 0, m = 0, u = 0, v = 0, c = 0, count = 0, flag = 0, t_equil = 50, ii = 0, jj = 0;
 	int vecI = 0, vecJ = 0;
 	double S = 0, DE = 0, r = 0, J = 1.0, step_width = 0.0, T, beta = 0;
+	bool latticePlot = true;
 	T = 1.90;																																			//initial temperature
 	B[0] = 0.1;
 	clock_t startTime = clock();
@@ -254,15 +256,17 @@ int main()
 					if (count == 0) { cout << "Approaching equilibrium: " << t_equil << " sweeps \t Total measurements: " << N << " (Take 1 every " << Ni[u]<< " sweeps)\t\n"; }
 					count++;
 				}
-
-				for(vecI= 0; vecI<n; vecI++)
+				if(latticePlot)
 				{
-					for(vecJ= 0; vecJ<n; vecJ++)
+					for(vecI= 0; vecI<n; vecI++)
 					{
-						vecMat.at(vecI * n + vecJ) = 1.0*pin[vecI][vecJ];
+						for(vecJ= 0; vecJ<n; vecJ++)
+						{
+							vecMat.at(vecI * n + vecJ) = 1.0*pin[vecI][vecJ];
+						}
 					}
+					plot_fig(vecPtr, 1, "Lattice N = " + std::to_string(s+1));
 				}
-				plot_fig(vecPtr, 1, "Lattice N = " + std::to_string(s+1));
 				//memcpy((void *)mxGetPr(POINTER1), (void *)pin, sizeof(double)*n*n);
 				//engPutVariable(ep, "pin", POINTER1);
 
