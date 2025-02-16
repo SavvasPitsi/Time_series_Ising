@@ -10,17 +10,40 @@
 using namespace std;
 namespace plt = matplotlibcpp;
 
-const int n = 256, N = 10000, steps = 1; //max 15 for figure
-double pin[n][n], h[n][n], neigh[4], M[N + 1], H[N + 1], M2[N], H2[N], tsweep[N], info[7], B[steps], meanM[steps], heat_cpty[steps], Ni[steps], criticalT[steps];
+const int n = 256, N = 1000, steps = 1; //max 15 for figure
+int pin[n][n];
+double h[n][n], neigh[4], M[N + 1], H[N + 1], M2[N], H2[N], tsweep[N], info[7], B[steps], meanM[steps], heat_cpty[steps], Ni[steps], criticalT[steps];
+std::vector<float> vecMat(n * n);
+const float* vecPtr = &(vecMat[0]);
 
+void plot_fig(std::vector<double>& v,int figNum = 1, std::string s="Title")
+{
+    plt::figure(figNum);
+    plt::clf();
+    plt::plot(v);
+    plt::title(s);
+    plt::show(false);
+    plt::pause(0.1);
+}
+
+void plot_fig(const float* p,int figNum = 1, std::string s="Title")
+{
+    plt::figure(figNum);
+    plt::clf();
+    plt::imshow(p, n, n, 1);
+    plt::title(s);
+    plt::show(false);
+    plt::pause(0.001);
+}
 
 
 int main()
 {
 	int i = 0, j = 0, s = 0, k = 0, l = 0, m = 0, u = 0, v = 0, c = 0, count = 0, flag = 0, t_equil = 1, ii = 0, jj = 0;
+	int vecI = 0, vecJ = 0;
 	double S = 0, DE = 0, r = 0, J = 1.0, step_width = 0.0, T, beta = 0;
-	T = 0.75;																																			//initial temperature
-	B[0] = 0.75;
+	T = 1.90;																																			//initial temperature
+	B[0] = 0.1;
 	clock_t startTime = clock();
 
 
@@ -232,7 +255,14 @@ int main()
 					count++;
 				}
 
-
+				for(vecI= 0; vecI<n; vecI++)
+				{
+					for(vecJ= 0; vecJ<n; vecJ++)
+					{
+						vecMat.at(vecI * n + vecJ) = 1.0*pin[vecI][vecJ];
+					}
+				}
+				plot_fig(vecPtr, 1, "Lattice N = " + std::to_string(s+1));
 				//memcpy((void *)mxGetPr(POINTER1), (void *)pin, sizeof(double)*n*n);
 				//engPutVariable(ep, "pin", POINTER1);
 
@@ -340,8 +370,13 @@ int main()
 	cout << "Process exited after " << double(clock() - startTime) / (double)CLOCKS_PER_SEC << " seconds." << endl;
 
 
-	plt::plot(M);
-    plt::show();
+	int n1 = sizeof(M) / sizeof(M[0]);
+    std::vector<double> V1(M,M+n1);
+
+	plot_fig(V1, 2, "Magnetization timeseries");
+
+
+
 
     // Write results in file
     std::cout << "Writing file" << std::endl;
@@ -362,6 +397,7 @@ int main()
     file.close();
     std::cout << "Data written to magnetization.csv" << std::endl;
 
+	plt::show();
 
 	// system("pause");
 	return 0;
