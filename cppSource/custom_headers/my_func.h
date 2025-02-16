@@ -1,16 +1,20 @@
 #define PI 3.1415926535897932384626433832795
 
 #include <math.h>
+#include <random>
+#include <time.h>
 
-double random(int max) 																																//Random number generator int threshold (not inclusive)
-{
-	//double RANDM = ((double) rand() / (RAND_MAX+1))*max;
-	//if(floor(RANDM) == max) { RANDM = max - 1; } 
-	//RAND_MAX + 1, remove check
-	//return RANDM;
-	return ((double)rand() / (RAND_MAX + 1.0))*max;
-} 
- 
+// double random(int max) 			//simple rand()																													//Random number generator int threshold (not inclusive)
+// {
+// 	return ((double)rand() / (RAND_MAX + 1.0))*max;
+// } 
+
+// double random(int max) { //Mersenne twister algorithm
+//     // static std::mt19937 rng(std::random_device{}());
+// 	static std::mt19937 rng(time(NULL));
+// 	std::uniform_real_distribution<double> dist(0.0, max - 1e-10);  
+//     return dist(rng);
+// }
 
 double mean(int values[], int size)																													//mean(int)
 {
